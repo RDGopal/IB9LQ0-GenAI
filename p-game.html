@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p-Beauty Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .instructions {
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .form-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      flex: 0 0 150px;
+      font-weight: bold;
+    }
+    .form-group input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .feedback {
+      margin-top: 20px;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>p-Beauty Game</h1>
+    <div class="instructions">
+      <p>This is a strategic guessing game where you choose a number between 0 and 100. After each guess, the game calculates the average of all chosen numbers so far, multiplies it by <em>p</em> (default is 2/3), and determines the target number. If your chosen number is closest to the target, you win!</p>
+    </div>
+    <div class="form-group">
+      <label for="chosenNumber">Enter a number (0-100):</label>
+      <input type="number" id="chosenNumber" min="0" max="100">
+    </div>
+    <button id="submitBtn">Submit Guess</button>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <script>
+    (function() {
+      let chosenNumbers = [];
+      let p = 2/3;
+      const chosenNumberInput = document.getElementById('chosenNumber');
+      const submitBtn = document.getElementById('submitBtn');
+      const feedbackDiv = document.getElementById('feedback');
+
+      function updateFeedback(message) {
+        feedbackDiv.textContent = message;
+        feedbackDiv.style.display = 'block';
+      }
+
+      function handleGuess() {
+        const chosenValue = parseFloat(chosenNumberInput.value);
+        if (isNaN(chosenValue) || chosenValue < 0 || chosenValue > 100) {
+          updateFeedback('Please enter a valid number between 0 and 100.');
+          return;
+        }
+
+        chosenNumbers.push(chosenValue);
+        const sum = chosenNumbers.reduce((acc, val) => acc + val, 0);
+        const avg = sum / chosenNumbers.length;
+        const targetNumber = avg * p;
+        const distance = Math.abs(chosenValue - targetNumber);
+
+        const message = `Your guess: ${chosenValue.toFixed(2)}\n` +
+                        `Average of all guesses: ${avg.toFixed(2)}\n` +
+                        `p-factor: ${p.toFixed(2)}\n` +
+                        `Target number: ${targetNumber.toFixed(2)}\n` +
+                        `Distance from target: ${distance.toFixed(2)}`;
+        updateFeedback(message);
+        chosenNumberInput.value = '';
+      }
+
+      submitBtn.addEventListener('click', handleGuess);
+    })();
+  </script>
+</body>
+</html>
